@@ -13,10 +13,8 @@ class OpenExchangeRepository (private val serviceApi: ServiceApi){
         get() = ratesLiveData
 
     suspend fun getRates(apiKey : String){
-        val result = serviceApi.getCurrencyRatesInDollar(apiKey)
-
-        if(result?.body() != null){
-            ratesLiveData.postValue(result.body())
-        }
+         var result = serviceApi.getCurrencyRatesInDollar(apiKey)
+         var listResult = result.await()
+         ratesLiveData.value = listResult
     }
 }

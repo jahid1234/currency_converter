@@ -10,9 +10,9 @@ import retrofit2.http.Query
 interface ServiceApi {
 
     @GET("latest.json?")
-    suspend fun getCurrencyRatesInDollar(@Query("app_id") id: String) : Response<OpenExchangePojo>
+    fun getCurrencyRatesInDollar(@Query("app_id") id: String) : Deferred<OpenExchangePojo>
 
-    @GET("currencies.json")
-    suspend fun getCurrency(): Deferred<CurrencyPojo>
+    /*@GET("currencies.json")
+    suspend fun getCurrency(): Deferred<CurrencyPojo>*/
 
 }
