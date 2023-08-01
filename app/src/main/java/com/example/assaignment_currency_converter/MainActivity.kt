@@ -20,8 +20,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val service = RetrofitHelper.getInstance().create(ServiceApi::class.java)
-        val repository = OpenExchangeRepository(service)
+
+        val repository = (application as CurrencyConverterApplication).applicationRepository
 
         mainViewModel = ViewModelProvider(this,MainViewModelFactory(repository)).get(MainViewModel::class.java)
 
