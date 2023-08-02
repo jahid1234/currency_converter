@@ -17,6 +17,11 @@ class OpenExchangeRepository(
 
     private val ratesLiveData = MutableLiveData<OpenExchangePojo>()
 
+    var currencyListAndRateData = database.currencyRateDao().getCurrencyAll()
+    var currencyNameListData = database.currencyRateDao().getCurrencyName()
+
+
+
     val rates: LiveData<OpenExchangePojo>
         get() = ratesLiveData
 
@@ -34,7 +39,7 @@ class OpenExchangeRepository(
 
             for (x in ratesStringArray) {
                 var secondSpitedArray : Array<String> = x.split("=").toTypedArray()
-                for(y  in secondSpitedArray.indices){
+                for(y  in 0..0){
                     var currencyName = secondSpitedArray[0]
                     var currencyRateToDollar = secondSpitedArray[1]
 
@@ -43,9 +48,6 @@ class OpenExchangeRepository(
                 }
             }
             ratesLiveData.value = listResult
-        }else{
-
-        }
-
+        }else{ }
     }
 }

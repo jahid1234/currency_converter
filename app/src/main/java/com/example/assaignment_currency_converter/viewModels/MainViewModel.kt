@@ -3,6 +3,7 @@ package com.example.assaignment_currency_converter.viewModels
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
+import com.example.assaignment_currency_converter.database.CurrencyRate
 import com.example.assaignment_currency_converter.models.OpenExchangePojo
 import com.example.assaignment_currency_converter.repository.OpenExchangeRepository
 import kotlinx.coroutines.CoroutineScope
@@ -18,9 +19,12 @@ class MainViewModel(private val repository: OpenExchangeRepository) : ViewModel(
     val exchangeRates: LiveData<OpenExchangePojo>
         get() = repository.rates
 
+    val currencyWithRateListData : LiveData<List<CurrencyRate>> = repository.currencyListAndRateData
+    val currencyNameListData : LiveData<List<String>> = repository.currencyNameListData
+    // get() = repository.currencyListData
 
     init {
-        getRates("bcee75774f2c484f89be9b0cc587bffb")
+       // getRates("bcee75774f2c484f89be9b0cc587bffb")
     }
 
     private fun getRates(apiKey : String){
@@ -32,4 +36,5 @@ class MainViewModel(private val repository: OpenExchangeRepository) : ViewModel(
             }
         }
     }
+
 }
