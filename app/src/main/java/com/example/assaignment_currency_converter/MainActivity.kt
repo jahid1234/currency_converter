@@ -3,24 +3,24 @@ package com.example.assaignment_currency_converter
 import android.R
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import androidx.databinding.DataBindingUtil
+import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.example.assaignment_currency_converter.api.RetrofitHelper
-import com.example.assaignment_currency_converter.api.ServiceApi
+import androidx.lifecycle.lifecycleScope
 import com.example.assaignment_currency_converter.database.CurrencyRate
 import com.example.assaignment_currency_converter.databinding.ActivityMainBinding
-import com.example.assaignment_currency_converter.repository.OpenExchangeRepository
 import com.example.assaignment_currency_converter.viewModels.MainViewModel
 import com.example.assaignment_currency_converter.viewModels.MainViewModelFactory
-import kotlin.math.log
-import kotlin.reflect.jvm.internal.impl.utils.ReportLevel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
+import kotlin.math.round
 
 class MainActivity : AppCompatActivity(),CurrencyListAdapter.OnItemClickListenerCustom{
 
@@ -28,6 +28,7 @@ class MainActivity : AppCompatActivity(),CurrencyListAdapter.OnItemClickListener
 
     private lateinit var mBinding : ActivityMainBinding
     private lateinit var selectedCurrency : String
+    private  var selectedCurrencyRate : String? = "AED"
     private lateinit var currencyArrayList : List<String>
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,9 +39,12 @@ class MainActivity : AppCompatActivity(),CurrencyListAdapter.OnItemClickListener
         setContentView(mBinding.root)
 
         val repository = (application as CurrencyConverterApplication).applicationRepository
+        val database  = (application as CurrencyConverterApplication).database
 
-        mainViewModel = ViewModelProvider(this,MainViewModelFactory(repository)).get(MainViewModel::class.java)
-
+        lifecycleScope.launch {
+             database.currencyRateDao().deleteAll()
+        }
+        mainViewModel = ViewModelProvider(this,MainViewModelFactory(repository,database)).get(MainViewModel::class.java)
 
         val gridAdapter = CurrencyListAdapter(this)
         mBinding.currencyConvertGrid.adapter = gridAdapter
@@ -70,6 +74,7 @@ class MainActivity : AppCompatActivity(),CurrencyListAdapter.OnItemClickListener
                     id: Long
                 ) {
                     selectedCurrency = currencyArrayList[position]
+                    mainViewModel.getSingleCurrencyRate(selectedCurrency)
                 }
 
                 override fun onNothingSelected(parent: AdapterView<*>?) {}
@@ -78,11 +83,44 @@ class MainActivity : AppCompatActivity(),CurrencyListAdapter.OnItemClickListener
             Log.e("Error","Exception: ${ex.localizedMessage}")
         }
 
+        mainViewModel.selectedCurrency.observe(this, Observer {item ->
+            item?.let {
+                selectedCurrencyRate = item
+            }
+        })
 
+        mBinding.ediTextAmount.addTextChangedListener(object : TextWatcher {
+
+            override fun afterTextChanged(s: Editable) {}
+
+            override fun beforeTextChanged(s: CharSequence, start: Int,
+                                           count: Int, after: Int) {
+            }
+
+            override fun onTextChanged(s: CharSequence, start: Int,
+                                       before: Int, count: Int) {
+                if(s.isEmpty()){
+                    mBinding.conversionTextView.text = ""
+                }
+            }
+        })
     }
 
     override fun onItemClickCustom(currencyDetailsProperty: CurrencyRate) {
-        var rate = currencyDetailsProperty.currencyRateToDollar
-        Log.d("itemClicked",rate.toString())
+        if(mBinding.ediTextAmount.text.isNotEmpty()){
+            if(mBinding.ediTextAmount.text.toString().toDouble() > 0) {
+                var convertToCurrencyRate = currencyDetailsProperty.currencyRateToDollar
+                if (selectedCurrencyRate!!.isNotEmpty() && convertToCurrencyRate.isNotEmpty()) {
+                    var conversionRate = String.format("%.2f",(convertToCurrencyRate.toDouble() / selectedCurrencyRate!!.toDouble()) * mBinding.ediTextAmount.text.toString()
+                        .toDouble())
+
+                    mBinding.conversionTextView.text = mBinding.ediTextAmount.text.toString() +" "+ selectedCurrency +" = "+ conversionRate.toString() +" "+currencyDetailsProperty.currencyName
+                }
+            }else{
+                Toast.makeText(this, "Give valid number greater than 0", Toast.LENGTH_SHORT).show()
+            }
+        }else{
+            Toast.makeText(this, "Give amount greater than 0", Toast.LENGTH_SHORT).show()
+        }
     }
 }

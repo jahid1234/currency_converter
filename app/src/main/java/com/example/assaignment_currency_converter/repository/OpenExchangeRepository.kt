@@ -16,9 +16,11 @@ class OpenExchangeRepository(
 ){
 
     private val ratesLiveData = MutableLiveData<OpenExchangePojo>()
+   // private var _selectedCurrency = MutableLiveData<String>()
 
     var currencyListAndRateData = database.currencyRateDao().getCurrencyAll()
     var currencyNameListData = database.currencyRateDao().getCurrencyName()
+    var selectedCurrency  = database.currencyRateDao().getCurrencyRateToDollar("AED")
 
 
 
@@ -49,5 +51,9 @@ class OpenExchangeRepository(
             }
             ratesLiveData.value = listResult
         }else{ }
+    }
+
+    fun getSingleCurrencyRate(currency: String){
+        selectedCurrency = database.currencyRateDao().getCurrencyRateToDollar(currency)
     }
 }

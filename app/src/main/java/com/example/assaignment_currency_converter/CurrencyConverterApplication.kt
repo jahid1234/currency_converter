@@ -9,6 +9,7 @@ import com.example.assaignment_currency_converter.repository.OpenExchangeReposit
 class CurrencyConverterApplication : Application() {
 
     lateinit var applicationRepository: OpenExchangeRepository
+    lateinit var database: CurrencyDatabase
 
     override fun onCreate() {
         super.onCreate()
@@ -17,7 +18,8 @@ class CurrencyConverterApplication : Application() {
 
     private fun initialize() {
         val quoteService = RetrofitHelper.getInstance().create(ServiceApi::class.java)
-        val database = CurrencyDatabase.getDatabase(applicationContext)
+        database = CurrencyDatabase.getDatabase(applicationContext)
+
         applicationRepository = OpenExchangeRepository(quoteService, database, applicationContext)
     }
 }
