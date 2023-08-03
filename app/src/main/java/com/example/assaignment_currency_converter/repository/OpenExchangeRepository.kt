@@ -49,11 +49,13 @@ class OpenExchangeRepository(
                     database.currencyRateDao().addCurrency(currencyRate)
                 }
             }
-            ratesLiveData.value = listResult
+           // ratesLiveData.value = listResult
         }else{ }
     }
 
     fun getSingleCurrencyRate(currency: String){
         selectedCurrency = database.currencyRateDao().getCurrencyRateToDollar(currency)
     }
+
+
 }

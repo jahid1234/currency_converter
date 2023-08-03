@@ -41,9 +41,10 @@ class MainActivity : AppCompatActivity(),CurrencyListAdapter.OnItemClickListener
         val repository = (application as CurrencyConverterApplication).applicationRepository
         val database  = (application as CurrencyConverterApplication).database
 
-        lifecycleScope.launch {
+     /*   lifecycleScope.launch {
              database.currencyRateDao().deleteAll()
-        }
+        }*/
+
         mainViewModel = ViewModelProvider(this,MainViewModelFactory(repository,database)).get(MainViewModel::class.java)
 
         val gridAdapter = CurrencyListAdapter(this)
