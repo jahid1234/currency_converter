@@ -30,6 +30,9 @@ class OpenExchangeRepository(
     suspend fun getRates(apiKey : String){
 
         if(NetworkUtils.isInternetAvailable(applicationContext)){
+
+            database.currencyRateDao().deleteAll()
+
             var result = serviceApi.getCurrencyRatesInDollar(apiKey)
             var listResult = result.await()
 

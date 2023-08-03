@@ -47,16 +47,34 @@ class MainActivity : AppCompatActivity(),CurrencyListAdapter.OnItemClickListener
 
         mainViewModel = ViewModelProvider(this,MainViewModelFactory(repository,database)).get(MainViewModel::class.java)
 
+        loadGridRecyclerView()
+        loadCurrencyNameSpinner()
+        editTextTextWatcher()
+        //observe only currency
+
+        getSelectedCurrencyRateFromSpinner()
+
+    }
+
+    private fun getSelectedCurrencyRateFromSpinner(){
+        mainViewModel.selectedCurrency.observe(this, Observer {item ->
+            item?.let {
+                selectedCurrencyRate = item
+            }
+        })
+    }
+
+    private fun loadGridRecyclerView(){
         val gridAdapter = CurrencyListAdapter(this)
         mBinding.currencyConvertGrid.adapter = gridAdapter
 
         //observe all from currency_details table
         mainViewModel.currencyWithRateListData.observe(this, Observer {
-             gridAdapter.submitList(it)
+            gridAdapter.submitList(it)
         })
+    }
 
-
-        //observe only currency
+    private fun loadCurrencyNameSpinner(){
         mainViewModel.currencyNameListData.observe(this, Observer {
             currencyArrayList= it
             Log.d("Currency", it.toString())
@@ -76,6 +94,8 @@ class MainActivity : AppCompatActivity(),CurrencyListAdapter.OnItemClickListener
                 ) {
                     selectedCurrency = currencyArrayList[position]
                     mainViewModel.getSingleCurrencyRate(selectedCurrency)
+                    mBinding.ediTextAmount.setText("")
+                    mBinding.conversionTextView.text = ""
                 }
 
                 override fun onNothingSelected(parent: AdapterView<*>?) {}
@@ -83,13 +103,9 @@ class MainActivity : AppCompatActivity(),CurrencyListAdapter.OnItemClickListener
         }catch (ex: java.lang.Exception){
             Log.e("Error","Exception: ${ex.localizedMessage}")
         }
+    }
 
-        mainViewModel.selectedCurrency.observe(this, Observer {item ->
-            item?.let {
-                selectedCurrencyRate = item
-            }
-        })
-
+    private fun editTextTextWatcher(){
         mBinding.ediTextAmount.addTextChangedListener(object : TextWatcher {
 
             override fun afterTextChanged(s: Editable) {}

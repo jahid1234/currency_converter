@@ -14,9 +14,7 @@ class CurrencyDetailsDownloadWorker(private val context: Context,params : Worker
     override fun doWork(): Result {
         Log.d("WokerManager", "worker called")
         val repository = (context as CurrencyConverterApplication).applicationRepository
-        val database = context.database
         CoroutineScope(Dispatchers.IO).launch {
-            database.currencyRateDao().deleteAll()
             repository.getRates("bcee75774f2c484f89be9b0cc587bffb")
         }
         return Result.success()
