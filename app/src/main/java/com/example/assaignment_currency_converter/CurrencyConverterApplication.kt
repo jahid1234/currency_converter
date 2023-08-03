@@ -26,7 +26,7 @@ class CurrencyConverterApplication : Application() {
 
     private fun setWorker() {
         val networkConstraints = Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
-        val workerRequest = PeriodicWorkRequest.Builder(CurrencyDetailsDownloadWorker::class.java,15,TimeUnit.MINUTES).setConstraints(networkConstraints).build()
+        val workerRequest = PeriodicWorkRequest.Builder(CurrencyDetailsDownloadWorker::class.java,30,TimeUnit.MINUTES).setConstraints(networkConstraints).build()
         WorkManager.getInstance(this).enqueue(workerRequest)
 
 

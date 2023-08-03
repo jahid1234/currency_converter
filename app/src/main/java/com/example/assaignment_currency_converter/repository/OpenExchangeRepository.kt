@@ -31,8 +31,6 @@ class OpenExchangeRepository(
 
         if(NetworkUtils.isInternetAvailable(applicationContext)){
 
-            database.currencyRateDao().deleteAll()
-
             var result = serviceApi.getCurrencyRatesInDollar(apiKey)
             var listResult = result.await()
 
@@ -41,6 +39,8 @@ class OpenExchangeRepository(
             ratesString = ratesString.dropLast(1)
 
             var ratesStringArray : Array<String> = ratesString.split(",").toTypedArray()
+
+            database.currencyRateDao().deleteAll()
 
             for (x in ratesStringArray) {
                 var secondSpitedArray : Array<String> = x.split("=").toTypedArray()
