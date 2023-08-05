@@ -15,6 +15,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.example.assaignment_currency_converter.database.CurrencyRate
 import com.example.assaignment_currency_converter.databinding.ActivityMainBinding
+import com.example.assaignment_currency_converter.repository.ApiStatus
 import com.example.assaignment_currency_converter.viewModels.MainViewModel
 import com.example.assaignment_currency_converter.viewModels.MainViewModelFactory
 import kotlinx.coroutines.CoroutineScope
@@ -28,7 +29,7 @@ class MainActivity : AppCompatActivity(),CurrencyListAdapter.OnItemClickListener
 
     private lateinit var mBinding : ActivityMainBinding
     private lateinit var selectedCurrency : String
-    private  var selectedCurrencyRate : String? = "AED"
+    private  var selectedCurrencyRate : String? = ""
     private lateinit var currencyArrayList : List<String>
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,12 +42,14 @@ class MainActivity : AppCompatActivity(),CurrencyListAdapter.OnItemClickListener
         val repository = (application as CurrencyConverterApplication).applicationRepository
         val database  = (application as CurrencyConverterApplication).database
 
-     /*   lifecycleScope.launch {
+      /*  lifecycleScope.launch {
              database.currencyRateDao().deleteAll()
         }*/
 
         mainViewModel = ViewModelProvider(this,MainViewModelFactory(repository,database)).get(MainViewModel::class.java)
 
+
+        checkApiStatusShowProgressBar()
         loadGridRecyclerView()
         loadCurrencyNameSpinner()
         editTextTextWatcher()
@@ -56,8 +59,28 @@ class MainActivity : AppCompatActivity(),CurrencyListAdapter.OnItemClickListener
 
     }
 
+    private fun checkApiStatusShowProgressBar(){
+        mainViewModel.api_status.observe(this, Observer {
+            it?.let {
+                when(it){
+                    ApiStatus.LOADING->{
+                        mBinding.progressBar.visibility = View.VISIBLE
+                    }
+                    ApiStatus.DONE->{
+                        mBinding.progressBar.visibility = View.GONE
+                    }
+                    ApiStatus.ERROR->{
+                        mBinding.progressBar.visibility = View.GONE
+                        //Toast.makeText(this, "Loading ERROR!!!", Toast.LENGTH_SHORT).show()
+                        Log.d("Loading_error", "error!!!!!!!")
+                    }
+                }
+            }
+        })
+    }
+
     private fun getSelectedCurrencyRateFromSpinner(){
-        mainViewModel.selectedCurrency.observe(this, Observer {item ->
+        mainViewModel.selectedCurrencyRateFromViewModel.observe(this, Observer {item ->
             item?.let {
                 selectedCurrencyRate = item
             }
@@ -70,6 +93,8 @@ class MainActivity : AppCompatActivity(),CurrencyListAdapter.OnItemClickListener
 
         //observe all from currency_details table
         mainViewModel.currencyWithRateListData.observe(this, Observer {
+
+            Log.d("Currency To Gridlayout", it.toString())
             gridAdapter.submitList(it)
         })
     }
@@ -77,7 +102,7 @@ class MainActivity : AppCompatActivity(),CurrencyListAdapter.OnItemClickListener
     private fun loadCurrencyNameSpinner(){
         mainViewModel.currencyNameListData.observe(this, Observer {
             currencyArrayList= it
-            Log.d("Currency", it.toString())
+            Log.d("Currency To Spinner", it.toString())
             val adapter = ArrayAdapter(this, R.layout.simple_spinner_item, it)
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
             mBinding.spinner.adapter = adapter

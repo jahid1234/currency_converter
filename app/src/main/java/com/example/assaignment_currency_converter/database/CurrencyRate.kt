@@ -4,7 +4,7 @@ import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
 
-
+//indices = [Index(value = ["currencyName"], unique = true)]
 @Entity(tableName="currency_details",indices = [Index(value = ["currencyName"], unique = true)])
 data class CurrencyRate (
     @PrimaryKey(autoGenerate = true)

@@ -33,9 +33,8 @@ class CurrencyConverterApplication : Application() {
     }
 
     private fun initialize() {
-        val quoteService = RetrofitHelper.getInstance().create(ServiceApi::class.java)
+        val service = RetrofitHelper.getInstance().create(ServiceApi::class.java)
         database = CurrencyDatabase.getDatabase(applicationContext)
-
-        applicationRepository = OpenExchangeRepository(quoteService, database, applicationContext)
+        applicationRepository = OpenExchangeRepository(service, database, applicationContext)
     }
 }
