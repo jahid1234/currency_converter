@@ -29,15 +29,16 @@ class MainViewModel(private val repository: OpenExchangeRepository, private val 
        // getRates("bcee75774f2c484f89be9b0cc587bffb")
     }
 
-  /*  private fun getRates(apiKey : String){
+    private fun getRates(apiKey : String){
         coroutineScope.launch {
             try{
+                repository.deleteAll()
                 repository.getRates(apiKey)
             }catch (t : Throwable){
                 Log.e("error",t.message.toString() )
             }
         }
-    }*/
+    }
 
      fun getSingleCurrencyRate(currency : String){
         repository.getSingleCurrencyRate(currency)

@@ -15,6 +15,7 @@ class CurrencyDetailsDownloadWorker(private val context: Context,params : Worker
         Log.d("WokerManager", "worker called")
         val repository = (context as CurrencyConverterApplication).applicationRepository
         CoroutineScope(Dispatchers.IO).launch {
+            repository.deleteAll()
             repository.getRates("bcee75774f2c484f89be9b0cc587bffb")
         }
         return Result.success()
