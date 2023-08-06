@@ -32,7 +32,7 @@ class OpenExchangeRepository(
     var currencyNameListData = database.currencyRateDao().getCurrencyName()
 
 
-    var _selectedCurrencyRate  = MediatorLiveData<String>()
+    private var _selectedCurrencyRate  = MediatorLiveData<String>()
 
     val selectedCurrencyRate : LiveData<String>
             get() = _selectedCurrencyRate
@@ -44,23 +44,23 @@ class OpenExchangeRepository(
         if(NetworkUtils.isInternetAvailable(applicationContext)){
             try {
                 Log.d("Insert", "insert job started")
-                var result = serviceApi.getCurrencyRatesInDollar(apiKey)
+                val result = serviceApi.getCurrencyRatesInDollar(apiKey)
 
-                var listResult = result.await()
+                val listResult = result.await()
 
                 var ratesString = listResult.rates.toString()
                 ratesString = ratesString.drop(6)
                 ratesString = ratesString.dropLast(1)
 
-                var ratesStringArray : Array<String> = ratesString.split(",").toTypedArray()
+                val ratesStringArray : Array<String> = ratesString.split(",").toTypedArray()
 
                 delay(1000L)
 
                 for (x in ratesStringArray) {
-                    var secondSpitedArray: Array<String> = x.split("=").toTypedArray()
+                    val secondSpitedArray: Array<String> = x.split("=").toTypedArray()
                     for (y in 0..0) {
-                        var currencyName = secondSpitedArray[0]
-                        var currencyRateToDollar = secondSpitedArray[1]
+                        val currencyName = secondSpitedArray[0]
+                        val currencyRateToDollar = secondSpitedArray[1]
 
                         val currencyRate = CurrencyRate(0,currencyName, currencyRateToDollar)
                         database.currencyRateDao().addCurrency(currencyRate)

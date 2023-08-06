@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 
 
 
-class MainViewModel(private val repository: OpenExchangeRepository, private val database: CurrencyDatabase) : ViewModel() {
+class MainViewModel(private val repository: OpenExchangeRepository) : ViewModel() {
 
     private var viewModelJob = Job()
     private val coroutineScope = CoroutineScope(viewModelJob + Dispatchers.Main)
@@ -30,7 +30,7 @@ class MainViewModel(private val repository: OpenExchangeRepository, private val 
         getRates("21ec5fc817be452896336e840772e5f3")
     }
 
-    private fun getRates(apiKey : String){
+     fun getRates(apiKey : String){
         coroutineScope.launch {
             try{
                 repository.deleteAll()
@@ -42,7 +42,7 @@ class MainViewModel(private val repository: OpenExchangeRepository, private val 
     }
 
      fun getSingleCurrencyRate(currency : String){
-        return repository.getSingleCurrencyRate(currency)
+         repository.getSingleCurrencyRate(currency)
     }
 
 

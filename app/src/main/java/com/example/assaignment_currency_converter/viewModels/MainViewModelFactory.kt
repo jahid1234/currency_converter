@@ -7,6 +7,6 @@ import com.example.assaignment_currency_converter.repository.OpenExchangeReposit
 
 class MainViewModelFactory(private val repository: OpenExchangeRepository, private val database: CurrencyDatabase) : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-        return MainViewModel(repository,database) as T
+        return MainViewModel(repository) as T
     }
 }

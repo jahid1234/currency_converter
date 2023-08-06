@@ -153,7 +153,7 @@ class MainActivity : AppCompatActivity(),CurrencyListAdapter.OnItemClickListener
             if(mBinding.ediTextAmount.text.toString().toDouble() > 0) {
                 var convertToCurrencyRate = currencyDetailsProperty.currencyRateToDollar
                 if (selectedCurrencyRate!!.isNotEmpty() && convertToCurrencyRate.isNotEmpty()) {
-                    var conversionRate = String.format("%.2f",(convertToCurrencyRate.toDouble() / selectedCurrencyRate!!.toDouble()) * mBinding.ediTextAmount.text.toString()
+                    var conversionRate = String.format("%.6f",(convertToCurrencyRate.toDouble() / selectedCurrencyRate!!.toDouble()) * mBinding.ediTextAmount.text.toString()
                         .toDouble())
 
                     mBinding.conversionTextView.text = mBinding.ediTextAmount.text.toString() +" "+ selectedCurrency +" = "+ conversionRate.toString() +" "+currencyDetailsProperty.currencyName
